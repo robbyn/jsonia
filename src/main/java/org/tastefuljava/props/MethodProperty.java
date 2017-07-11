@@ -5,7 +5,7 @@ import java.lang.reflect.Method;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-public class MethodProperty extends Property {
+public class MethodProperty extends PropertyDef {
     private static final Logger LOG
             = Logger.getLogger(MethodProperty.class.getName());
 

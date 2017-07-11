@@ -9,36 +9,45 @@ import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-public class Properties {
+public class ClassDef<T> {
     private static final Logger LOG
             = Logger.getLogger(FieldProperty.class.getName());
-    private static final Map<Class<?>,Map<String,Property>> CLASS_PROPERTIES
-            = new HashMap<>();
+    private static final Map<Class<?>,ClassDef> CLASSES = new HashMap<>();
 
-    private Properties() {
-    }
+    private final Class<T> clazz;
+    private final Map<String,PropertyDef> props = new LinkedHashMap<>();
 
-    public static Map<String,Property> classProperties(Class<?> clazz) {
-        Map<String,Property> props = CLASS_PROPERTIES.get(clazz);
-        if (props == null) {
-            props = new LinkedHashMap<>();
-            extractProperties(clazz, props);
-            CLASS_PROPERTIES.put(clazz, props);
+    public static <T> ClassDef<T> forClass(Class<T> clazz) {
+        ClassDef<T> def = CLASSES.get(clazz);
+        if (def == null) {
+            def = new ClassDef(clazz);
+            CLASSES.put(clazz, def);
         }
-        return props;
+        return def;
     }
 
-    private static void extractProperties(Class<?> clazz,
-            Map<String, Property> props) {
-        long tm = System.nanoTime();
-        extractFieldProps(clazz, props);
-        extractMethodProps(clazz, props);
-        tm = System.nanoTime()-tm;
-        LOG.log(Level.INFO, "Properties extracted in {0}ns", tm);
+    private ClassDef(Class<T> clazz) {
+        this.clazz = clazz;
+        extractProps();
     }
 
-    private static void extractFieldProps(Class<?> clazz,
-            Map<String, Property> props) {
+    public Class<T> getJavaClass() {
+        return clazz;
+    }
+
+    public String getName() {
+        return clazz.getName();
+    }
+
+    public PropertyDef getProperty(String name) {
+        return props.get(name);
+    }
+
+    public PropertyDef[] getProperties() {
+        return props.values().toArray(new PropertyDef[props.size()]);
+    }
+
+    private void extractFieldProps() {
         for (Class<?> cl = clazz; cl != Object.class;
                 cl = cl.getSuperclass()) {
             for (Field field: cl.getDeclaredFields()) {
@@ -56,10 +65,10 @@ public class Properties {
         }
     }
 
-    private static void extractMethodProps(Class<?> cl, Map<String,
-            Property> props) {
-        Map<String,Method> getters = extractGetters(cl);
-        Map<String,Method> setters = extractSetters(cl);
+    private void extractMethodProps() {
+        final Method[] methods = clazz.getMethods();
+        Map<String,Method> getters = extractGetters(methods);
+        Map<String,Method> setters = extractSetters(methods);
         for (Map.Entry<String,Method> e: getters.entrySet()) {
             String name = e.getKey();
             Method getter = e.getValue();
@@ -77,9 +86,9 @@ public class Properties {
         }
     }
 
-    private static Map<String, Method> extractGetters(Class<?> cl) {
+    private static Map<String, Method> extractGetters(Method[] methods) {
         Map<String, Method> getters = new LinkedHashMap<>();
-        for (Method method: cl.getMethods()) {
+        for (Method method: methods) {
             if (method.getDeclaringClass() == Object.class) {
                 // skip
             } else if (method.getParameterTypes().length > 0) {
@@ -106,9 +115,9 @@ public class Properties {
         return getters;
     }
 
-    private static Map<String, Method> extractSetters(Class<?> cl) {
+    private static Map<String, Method> extractSetters(Method[] methods) {
         Map<String, Method> setters = new LinkedHashMap<>();
-        for (Method method: cl.getMethods()) {
+        for (Method method: methods) {
             if (method.getDeclaringClass() == Object.class) {
                 // skip
             } else if (method.getParameterTypes().length != 1) {
@@ -126,5 +135,13 @@ public class Properties {
             }
         }
         return setters;
+    }
+
+    private void extractProps() {
+        long tm = System.nanoTime();
+        extractFieldProps();
+        extractMethodProps();
+        tm = System.nanoTime()-tm;
+        LOG.log(Level.INFO, "Properties extracted in {0}ns", tm);
     }
 }

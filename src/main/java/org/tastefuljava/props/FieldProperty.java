@@ -4,7 +4,7 @@ import java.lang.reflect.Field;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-public class FieldProperty extends Property {
+public class FieldProperty extends PropertyDef {
     private static final Logger LOG
             = Logger.getLogger(FieldProperty.class.getName());
 

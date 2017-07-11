@@ -19,8 +19,8 @@ import java.util.SortedSet;
 import java.util.TreeSet;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import org.tastefuljava.props.Properties;
-import org.tastefuljava.props.Property;
+import org.tastefuljava.props.ClassDef;
+import org.tastefuljava.props.PropertyDef;
 import org.tastefuljava.util.InvocationLogger;
 
 public class JSon {
@@ -101,9 +101,9 @@ public class JSon {
                     handler.endField(name);
                 }
             } else {
-                Map<String,Property> props = Properties.classProperties(clazz);
+                ClassDef cdef = ClassDef.forClass(clazz);
                 handler.startObject();
-                for (Property prop: props.values()) {
+                for (PropertyDef prop: cdef.getProperties()) {
                     Object value = prop.get(object);
                     if (value != null) {
                         handler.startField(prop.getName());
@@ -145,9 +145,8 @@ public class JSon {
         public void startField(String name) {
             classStack.add(0, clazz);
             Object object = stack.get(0);
-            Map<String, Property> props
-                    = Properties.classProperties(object.getClass());
-            Property prop = props.get(name);
+            ClassDef cdef = ClassDef.forClass(object.getClass());
+            PropertyDef prop = cdef.getProperty(name);
             clazz = prop == null ? Object.class : prop.getType();
         }
 
@@ -155,9 +154,8 @@ public class JSon {
         public void endField(String name) {
             clazz = classStack.remove(0);
             Object object = stack.get(0);
-            Map<String, Property> props
-                    = Properties.classProperties(object.getClass());
-            Property prop = props.get(name);
+            ClassDef cdef = ClassDef.forClass(object.getClass());
+            PropertyDef prop = cdef.getProperty(name);
             if (prop != null && prop.canSet()) {
                 prop.set(object, convert(top, prop.getType()));
             }

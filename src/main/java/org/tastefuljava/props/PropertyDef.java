@@ -1,10 +1,10 @@
 package org.tastefuljava.props;
 
-public abstract class Property {
+public abstract class PropertyDef {
     private final String name;
     private final Class<?> type;
 
-    protected Property(String name, Class<?> type) {
+    protected PropertyDef(String name, Class<?> type) {
         this.name = name;
         this.type = type;
     }
