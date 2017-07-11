@@ -39,6 +39,15 @@ public class ClassDef<T> {
         return clazz.getName();
     }
 
+    public T newInstance() {
+        try {
+            return clazz.newInstance();
+        } catch (InstantiationException | IllegalAccessException ex) {
+            LOG.log(Level.SEVERE, "Error instanciating object", ex);
+            throw new RuntimeException(ex.getMessage());
+        }
+    }
+
     public PropertyDef getProperty(String name) {
         return props.get(name);
     }

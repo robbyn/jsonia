@@ -75,61 +75,76 @@ public class JSon {
         } else {
             Class<?> clazz = object.getClass();
             if (clazz.isArray()) {
-                handler.startArray();
-                int length = Array.getLength(object);
-                for (int i = 0; i < length; ++i) {
-                    handler.startElement();
-                    visit(Array.get(object, i), handler);
-                    handler.endElement();
-                }
-                handler.endArray();
+                visitArray(object, handler);
             } else if (Iterable.class.isAssignableFrom(clazz)) {
-                Iterable<?> able = (Iterable<?>)object;
-                handler.startArray();
-                for (Object elm: able) {
-                    handler.startElement();
-                    visit(elm, handler);
-                    handler.endElement();
-                } 
-                handler.endArray();
+                visitCollection((Iterable<?>)object, handler);
             } else if (Map.class.isAssignableFrom(clazz)) {
-                Map<?,?> map = (Map<?,?>)object;
-                for (Map.Entry<?,?> e: map.entrySet()) {
-                    String name = e.getKey().toString();
-                    handler.startField(name);
-                    visit(e.getValue(), handler);
-                    handler.endField(name);
-                }
+                visitMap((Map<?,?>)object, handler);
             } else {
                 ClassDef cdef = ClassDef.forClass(clazz);
-                handler.startObject();
-                for (PropertyDef prop: cdef.getProperties()) {
-                    Object value = prop.get(object);
-                    if (value != null) {
-                        handler.startField(prop.getName());
-                        visit(value, handler);
-                        handler.endField(prop.getName());
-                    }
-                }
-                handler.endObject();
+                visitObject(cdef, object, handler);
             }
         }
+    }
+
+    private static void visitMap(Map<?, ?> map, JSonHandler handler) {
+        for (Map.Entry<?,?> e: map.entrySet()) {
+            String name = e.getKey().toString();
+            handler.startField(name);
+            visit(e.getValue(), handler);
+            handler.endField(name);
+        }
+    }
+
+    private static void visitObject(ClassDef cdef, Object obj,
+            JSonHandler handler) {
+        handler.startObject();
+        for (PropertyDef prop: cdef.getProperties()) {
+            Object value = prop.get(obj);
+            if (value != null) {
+                handler.startField(prop.getName());
+                visit(value, handler);
+                handler.endField(prop.getName());
+            }
+        }
+        handler.endObject();
+    }
+
+    private static void visitCollection(Iterable<?> col, JSonHandler handler) {
+        handler.startArray();
+        for (Object elm: col) {
+            handler.startElement();
+            visit(elm, handler);
+            handler.endElement();
+        }
+        handler.endArray();
+    }
+
+    private static void visitArray(Object array, JSonHandler handler) {
+        handler.startArray();
+        int length = Array.getLength(array);
+        for (int i = 0; i < length; ++i) {
+            handler.startElement();
+            visit(Array.get(array, i), handler);
+            handler.endElement();
+        }
+        handler.endArray();
     }
 
     private static class Handler implements JSonHandler {
         private Object top = null;
         private final List<Object> stack = new ArrayList<>();
-        private Class<?> clazz;
-        private final List<Class<?>> classStack = new ArrayList<>();
+        private Class<?> type;
+        private final List<Class<?>> typeStack = new ArrayList<>();
 
         private Handler(Class<?> clazz) {
-            this.clazz = clazz;
+            this.type = clazz;
         }
 
         @Override
         public void startObject() {
             try {
-                stack.add(0, clazz.newInstance());
+                stack.add(0, type.newInstance());
             } catch (InstantiationException | IllegalAccessException ex) {
                 LOG.log(Level.SEVERE, "Error instanciating object", ex);
                 throw new RuntimeException(ex.getMessage());
@@ -143,16 +158,16 @@ public class JSon {
 
         @Override
         public void startField(String name) {
-            classStack.add(0, clazz);
+            typeStack.add(0, type);
             Object object = stack.get(0);
             ClassDef cdef = ClassDef.forClass(object.getClass());
             PropertyDef prop = cdef.getProperty(name);
-            clazz = prop == null ? Object.class : prop.getType();
+            type = prop == null ? Object.class : prop.getType();
         }
 
         @Override
         public void endField(String name) {
-            clazz = classStack.remove(0);
+            type = typeStack.remove(0);
             Object object = stack.get(0);
             ClassDef cdef = ClassDef.forClass(object.getClass());
             PropertyDef prop = cdef.getProperty(name);
@@ -170,36 +185,36 @@ public class JSon {
         public void endArray() {
             top = stack.remove(0);
             List<?> list = (List<?>)top;
-            if (clazz.isArray()) {
+            if (type.isArray()) {
                 int length = list.size();
-                Class<?> elmType = clazz.getComponentType();
+                Class<?> elmType = type.getComponentType();
                 top = Array.newInstance(elmType, length);
                 for (int i = 0; i < length; ++i) {
                     Object elm = convert(list.get(i), elmType);
                     Array.set(top, i, elm);
                 }
-            } else if (clazz.isAssignableFrom(List.class)) {
+            } else if (type.isAssignableFrom(List.class)) {
                 // nothing to do
-            } else if (clazz.isAssignableFrom(SortedSet.class)) {
+            } else if (type.isAssignableFrom(SortedSet.class)) {
                 top = new TreeSet<>(list);
-            } else if (clazz.isAssignableFrom(Set.class)) {
+            } else if (type.isAssignableFrom(Set.class)) {
                 top = new HashSet<>(list);
             }
         }
 
         @Override
         public void startElement() {
-            classStack.add(0, clazz);
-            if (clazz.isArray()) {
-                clazz = clazz.getComponentType();
-            } else if (Collection.class.isAssignableFrom(clazz)) {
-                clazz = Object.class;
+            typeStack.add(0, type);
+            if (type.isArray()) {
+                type = type.getComponentType();
+            } else if (Collection.class.isAssignableFrom(type)) {
+                type = Object.class;
             }
         }
 
         @Override
         public void endElement() {
-            clazz = classStack.remove(0);
+            type = typeStack.remove(0);
             @SuppressWarnings("unchecked")
             List<Object> array = (List<Object>)stack.get(0);
             array.add(top);
