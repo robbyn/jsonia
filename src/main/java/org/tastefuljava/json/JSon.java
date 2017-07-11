@@ -14,8 +14,6 @@ import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
-import java.util.SortedSet;
 import java.util.TreeSet;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -88,12 +86,12 @@ public class JSon {
     }
 
     private static void visitMap(Map<?, ?> map, JSonHandler handler) {
-        for (Map.Entry<?,?> e: map.entrySet()) {
+        map.entrySet().forEach((e) -> {
             String name = e.getKey().toString();
             handler.startField(name);
             visit(e.getValue(), handler);
             handler.endField(name);
-        }
+        });
     }
 
     private static void visitObject(ClassDef cdef, Object obj,
@@ -136,6 +134,8 @@ public class JSon {
         private final List<Object> stack = new ArrayList<>();
         private Class<?> type;
         private final List<Class<?>> typeStack = new ArrayList<>();
+        private ClassDef<?> classDef;
+        private final List<ClassDef<?>> classStack = new ArrayList<>();
 
         private Handler(Class<?> clazz) {
             this.type = clazz;
@@ -143,36 +143,32 @@ public class JSon {
 
         @Override
         public void startObject() {
-            try {
-                stack.add(0, type.newInstance());
-            } catch (InstantiationException | IllegalAccessException ex) {
-                LOG.log(Level.SEVERE, "Error instanciating object", ex);
-                throw new RuntimeException(ex.getMessage());
-            }
+            classStack.add(0, classDef);
+            classDef = ClassDef.forClass(type);
+            stack.add(0, top);
+            top = classDef.newInstance();
         }
 
         @Override
         public void endObject() {
-            top = stack.remove(0);
+            classDef = classStack.remove(0);
         }
 
         @Override
         public void startField(String name) {
             typeStack.add(0, type);
-            Object object = stack.get(0);
-            ClassDef cdef = ClassDef.forClass(object.getClass());
-            PropertyDef prop = cdef.getProperty(name);
+            PropertyDef prop = classDef.getProperty(name);
             type = prop == null ? Object.class : prop.getType();
         }
 
         @Override
         public void endField(String name) {
             type = typeStack.remove(0);
-            Object object = stack.get(0);
-            ClassDef cdef = ClassDef.forClass(object.getClass());
-            PropertyDef prop = cdef.getProperty(name);
+            Object value = top;
+            top = stack.remove(0);
+            PropertyDef prop = classDef.getProperty(name);
             if (prop != null && prop.canSet()) {
-                prop.set(object, convert(top, prop.getType()));
+                prop.set(top, convert(value, prop.getType()));
             }
         }
 
@@ -193,12 +189,19 @@ public class JSon {
                     Object elm = convert(list.get(i), elmType);
                     Array.set(top, i, elm);
                 }
-            } else if (type.isAssignableFrom(List.class)) {
-                // nothing to do
-            } else if (type.isAssignableFrom(SortedSet.class)) {
-                top = new TreeSet<>(list);
-            } else if (type.isAssignableFrom(Set.class)) {
-                top = new HashSet<>(list);
+            } else if (type.isAssignableFrom(Iterable.class)) {
+                if (type.isAssignableFrom(HashSet.class)) {
+                    top = new HashSet<>(list);
+                } else if (type.isAssignableFrom(TreeSet.class)) {
+                    top = new TreeSet<>(list);
+                } else if (type.isAssignableFrom(ArrayList.class)) {
+                    // no conversion required
+                } else {
+                    RuntimeException e = new RuntimeException(
+                            "Cannot assign an array to a  " + type.getName());
+                    LOG.log(Level.SEVERE, "Error building object", e);
+                    throw e;
+                }
             }
         }
 
@@ -216,8 +219,10 @@ public class JSon {
         public void endElement() {
             type = typeStack.remove(0);
             @SuppressWarnings("unchecked")
-            List<Object> array = (List<Object>)stack.get(0);
-            array.add(top);
+            Object elm = top;
+            top = stack.remove(0);
+            List<Object> array = (List<Object>)top;
+            array.add(elm);
         }
 
         @Override
