@@ -74,9 +74,14 @@ public class JSonTest {
     @Test
     public void testNumbers() {
         try {
-            Number n = JSon.read("-12345", Number.class);
+            String s = "-12345678901";
+            Number n = JSon.read(s, Number.class);
             assertTrue(n instanceof Long);
-            assertEquals(-12345L, n.longValue());
+            assertEquals(Long.parseLong(s), n.longValue());
+            s = "-1234567890";
+            n = JSon.read(s, Number.class);
+            assertTrue(n instanceof Integer);
+            assertEquals(Integer.parseInt(s), n.intValue());
             n = JSon.read("-1234.5678", Number.class);
             assertTrue(n instanceof BigDecimal);
             assertEquals(new BigDecimal("-1234.5678"),n);

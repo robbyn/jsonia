@@ -6,6 +6,7 @@ import java.io.InputStreamReader;
 import java.io.Reader;
 import java.io.StringReader;
 import java.math.BigDecimal;
+import java.math.BigInteger;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -23,6 +24,11 @@ public class JSonParser {
         KEYWORDS.put("false", Symbol.FALSE);
         KEYWORDS.put("true", Symbol.TRUE);
     }
+
+    private static final BigInteger MIN_LONG
+            = BigInteger.valueOf(Long.MIN_VALUE);
+    private static final BigInteger MAX_LONG
+            = BigInteger.valueOf(Long.MAX_VALUE);
 
     private final Reader in;
     private final JSonHandler handler;
@@ -265,7 +271,20 @@ public class JSonParser {
         } else if (hasFrac) {
             number = new BigDecimal(s);
         } else {
-            number = Long.valueOf(s);
+            BigInteger bi = new BigInteger(s);
+            if (bi.compareTo(MIN_LONG) < 0 || bi.compareTo(MAX_LONG) > 0) {
+                number = bi;
+            } else {
+                setLong(bi.longValue());
+            }
+        }
+    }
+
+    private void setLong(long l) {
+        if (l < Integer.MIN_VALUE || l > Integer.MAX_VALUE) {
+            number = l;
+        } else {
+            number = (int)l;
         }
     }
 
