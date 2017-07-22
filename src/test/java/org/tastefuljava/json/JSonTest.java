@@ -80,7 +80,9 @@ public class JSonTest {
             n = JSon.read("-1234.5678", Number.class);
             assertTrue(n instanceof BigDecimal);
             assertEquals(new BigDecimal("-1234.5678"),n);
-            
+            n = JSon.read("-1.2345678e+7", Number.class);
+            assertTrue(n instanceof Double);
+            assertEquals(-12345678L, n.longValue());
         } catch (IOException ex) {
             LOG.log(Level.SEVERE, null, ex);
             fail(ex.getMessage());
