@@ -5,6 +5,7 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.Reader;
 import java.io.StringReader;
+import java.math.BigDecimal;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -28,7 +29,7 @@ public class JSonParser {
     private int c = ' ';
     private Symbol sy;
     private String string;
-    private double number;
+    private Number number;
 
     private JSonParser(Reader in, JSonHandler handler) {
         this.in = in;
@@ -129,12 +130,11 @@ public class JSonParser {
                 if (!Character.isDigit(c)) {
                     throw new IOException("Invalid number");
                 }
-                number();
-                number = -number;
+                number(true);
                 break;
             default:
                 if (Character.isDigit(c)) {
-                    number();
+                    number(false);
                 } else if (Character.isJavaIdentifierStart(c)) {
                     identifier();
                 } else {
@@ -221,50 +221,52 @@ public class JSonParser {
         return result;
     }
 
-    private void number() throws IOException {
-        double value = 0;
+    private void number(boolean neg) throws IOException {
+        StringBuilder buf = new StringBuilder();
+        if (neg) {
+            buf.append('-');
+        }
         if (c == '0') {
+            buf.append('0');
             nextc();
         } else {
             do {
-                value = 10*value + c - '0';
+                buf.append((char)c);
             } while (Character.isDigit(nextc()));
         }
-        if (c == '.') {
-            double m = 1;
+        boolean hasFrac = c == '.';
+        if (hasFrac) {
+            buf.append('.');
             nextc();
             while (Character.isDigit(c)) {
-                m *= 0.1;
-                value += m*(c - '0');
+                buf.append((char)c);
                 nextc();
             }
         }
-        if (c == 'E' || c == 'e') {
-            int e = 0;
-            double f = 1;
-            double m = 10;
+        boolean hasExp = c == 'E' || c == 'e';
+        if (hasExp) {
+            buf.append('E');
             nextc();
             if (c == '+') {
                 nextc();
             } else if (c == '-') {
-                m = 0.1;
+                buf.append('-');
                 nextc();
             }
             while (Character.isDigit(c)) {
-                e = 10*e + c - '0';
+                buf.append((char)c);
                 nextc();
             }
-            while (e > 0) {
-                if ((e & 1) != 0) {
-                    f *= m;
-                }
-                m *= m;
-                e >>>= 1;
-            }
-            value *= f;
         }
         sy = Symbol.NUMBER;
-        number = value;
+        String s = buf.toString();
+        if (hasExp) {
+            number = Double.valueOf(s);
+        } else if (hasFrac) {
+            number = new BigDecimal(s);
+        } else {
+            number = Long.valueOf(s);
+        }
     }
 
     private void identifier() throws IOException {

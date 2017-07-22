@@ -1,5 +1,6 @@
 package org.tastefuljava.json;
 
+import java.io.IOException;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Date;
@@ -10,6 +11,7 @@ import java.util.logging.Logger;
 import org.junit.After;
 import org.junit.AfterClass;
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 import org.junit.Before;
 import org.junit.BeforeClass;
@@ -64,6 +66,22 @@ public class JSonTest {
             String json2 = JSon.stringify(obj2, true);
             assertEquals(json1, json2);
         } catch (Throwable ex) {
+            LOG.log(Level.SEVERE, null, ex);
+            fail(ex.getMessage());
+        }
+    }
+
+    @Test
+    public void testNumbers() {
+        try {
+            Number n = JSon.read("-12345", Number.class);
+            assertTrue(n instanceof Long);
+            assertEquals(-12345L, n.longValue());
+            n = JSon.read("-1234.5678", Number.class);
+            assertTrue(n instanceof BigDecimal);
+            assertEquals(new BigDecimal("-1234.5678"),n);
+            
+        } catch (IOException ex) {
             LOG.log(Level.SEVERE, null, ex);
             fail(ex.getMessage());
         }

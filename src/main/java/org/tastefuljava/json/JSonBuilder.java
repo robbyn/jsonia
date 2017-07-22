@@ -119,7 +119,7 @@ public class JSonBuilder implements JSonHandler {
     }
 
     @Override
-    public void handleNumber(double value) {
+    public void handleNumber(Number value) {
         top = value;
     }
 

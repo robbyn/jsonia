@@ -11,6 +11,6 @@ public interface JSonHandler {
     void endElement();
     void handleNull();
     void handleBoolean(boolean value);
-    void handleNumber(double value);
+    void handleNumber(Number value);
     void handleString(String value);
 }

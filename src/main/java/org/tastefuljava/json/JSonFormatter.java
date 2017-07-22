@@ -102,7 +102,7 @@ public class JSonFormatter implements JSonHandler, Closeable {
     }
 
     @Override
-    public void handleNumber(double value) {
+    public void handleNumber(Number value) {
         indent();
         out.print(getDecimalFormat().format(value));
     }
