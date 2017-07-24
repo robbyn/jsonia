@@ -122,5 +122,4 @@ public class JSon {
         }
         handler.endArray();
     }
-
 }
