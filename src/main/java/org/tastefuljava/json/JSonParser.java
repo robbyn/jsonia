@@ -275,16 +275,13 @@ public class JSonParser {
             if (bi.compareTo(MIN_LONG) < 0 || bi.compareTo(MAX_LONG) > 0) {
                 number = bi;
             } else {
-                setLong(bi.longValue());
+                long l = bi.longValue();
+                if (l < Integer.MIN_VALUE || l > Integer.MAX_VALUE) {
+                    number = l;
+                } else {
+                    number = (int) l;
+                }
             }
-        }
-    }
-
-    private void setLong(long l) {
-        if (l < Integer.MIN_VALUE || l > Integer.MAX_VALUE) {
-            number = l;
-        } else {
-            number = (int)l;
         }
     }
 
