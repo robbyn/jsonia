@@ -2,6 +2,7 @@ package org.tastefuljava.json;
 
 import java.io.Closeable;
 import java.io.PrintWriter;
+import java.io.Writer;
 import java.text.DecimalFormat;
 import java.text.DecimalFormatSymbols;
 
@@ -19,6 +20,11 @@ public class JSonFormatter implements JSonHandler, Closeable {
     public JSonFormatter(PrintWriter out, boolean format) {
         this.out = out;
         this.format = format;
+    }
+
+    public JSonFormatter(Writer writer, boolean format) {
+        this(writer instanceof PrintWriter
+                ? (PrintWriter)writer : new PrintWriter(writer), format);
     }
 
     @Override

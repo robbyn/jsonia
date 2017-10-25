@@ -1,6 +1,8 @@
 package org.tastefuljava.json;
 
 import java.io.IOException;
+import java.io.PrintWriter;
+import java.io.StringWriter;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Date;
@@ -59,6 +61,8 @@ public class JSonTest {
             TestObject obj1 = new TestObject(
                     BigDecimal.valueOf(123, 2), new Date(), "Hello world!!!",
                     new int[] {1,2,3});
+            String s = JSon.stringify(obj1, false);
+            LOG.log(Level.INFO, "Formatted: {0}", reformat(s, true));
             String json1 = JSon.stringify(obj1, true);
             LOG.log(Level.INFO, "JSon: {0}", json1);
             TestObject obj2 = JSon.read(json1, TestObject.class);
@@ -91,6 +95,18 @@ public class JSonTest {
         } catch (IOException ex) {
             LOG.log(Level.SEVERE, null, ex);
             fail(ex.getMessage());
+        }
+    }
+
+    private static String reformat(String json, boolean indent) {
+        try {
+            StringWriter sw = new StringWriter();
+            JSonParser.parse(json, new JSonFormatter(sw, indent));
+            return sw.toString();
+        } catch (IOException ex) {
+            LOG.log(Level.SEVERE, null, ex);
+            fail(ex.getMessage());
+            return null;
         }
     }
 
