@@ -34,10 +34,15 @@ public class JSon {
 
     private static Object readObject(Reader in, AbstractJSonBuilder handler)
             throws IOException {
+        parse(in, handler);
+        return handler.getTop();
+    }
+
+    public static void parse(Reader in, JSonHandler handler)
+            throws IOException {
         JSonHandler jsonHandler = InvocationLogger.wrap(
                 Level.FINE, handler, JSonHandler.class);
         JSonParser.parse(in, jsonHandler);
-        return handler.getTop();
     }
 
     public static void write(Object object, PrintWriter out, boolean format) {
