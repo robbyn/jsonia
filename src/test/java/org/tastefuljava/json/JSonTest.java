@@ -59,6 +59,7 @@ public class JSonTest {
             TestObject obj1 = new TestObject(
                     BigDecimal.valueOf(123, 2), new Date(), "Hello world!!!",
                     new int[] {1,2,3});
+            LOG.log(Level.INFO, "JSon: {0}", JSon.stringify(obj1, false));
             String json1 = JSon.stringify(obj1, true);
             LOG.log(Level.INFO, "JSon: {0}", json1);
             TestObject obj2 = JSon.read(json1, TestObject.class);

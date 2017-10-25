@@ -26,7 +26,7 @@ public class JSon {
             throws IOException {
         JSonBuilder handler = new JSonBuilder(clazz);
         JSonHandler jsonHandler = InvocationLogger.wrap(
-                Level.INFO, handler, JSonHandler.class);
+                Level.FINE, handler, JSonHandler.class);
         JSonParser.parse(in, jsonHandler);
         return clazz.cast(handler.getTop());
     }
