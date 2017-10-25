@@ -129,7 +129,8 @@ public class JSonBuilder extends AbstractJSonBuilder {
             return null;
         } else if (type.isAssignableFrom(value.getClass())) {
             return type.cast(value);
-        } else if ((type == boolean.class || type == Boolean.class) && value.getClass() == Boolean.class) {
+        } else if ((type == boolean.class || type == Boolean.class)
+                && value.getClass() == Boolean.class) {
             return value;
         } else if (value instanceof Number) {
             Number number = (Number) value;
