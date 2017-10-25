@@ -10,14 +10,11 @@ import java.lang.reflect.Array;
 import java.util.Date;
 import java.util.Map;
 import java.util.logging.Level;
-import java.util.logging.Logger;
 import org.tastefuljava.props.ClassDef;
 import org.tastefuljava.props.PropertyDef;
 import org.tastefuljava.util.InvocationLogger;
 
 public class JSon {
-    private static final Logger LOG = Logger.getLogger(JSon.class.getName());
-
     public static <T> T read(String json, Class<T> clazz) throws IOException {
         return read(new StringReader(json), clazz);
     }

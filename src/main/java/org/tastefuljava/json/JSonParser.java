@@ -62,7 +62,7 @@ public class JSonParser {
         nextsy();
         value();
     }
-    
+
     private void value() throws IOException {
         switch(sy) {
             case EOF:

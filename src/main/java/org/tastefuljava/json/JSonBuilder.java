@@ -148,13 +148,16 @@ public class JSonBuilder extends AbstractJSonBuilder {
             } else if (type == BigDecimal.class) {
                 return BigDecimal.valueOf(number.doubleValue());
             } else {
-                throw new RuntimeException("Cannot convert value of type " + type);
+                throw new RuntimeException(
+                        "Cannot convert value of type " + type);
             }
         } else if (type == Date.class && value instanceof String) {
             return JSonDates.parse((String) value);
-        } else if (Enum.class.isAssignableFrom(type) && value instanceof String) {
+        } else if (Enum.class.isAssignableFrom(type)
+                && value instanceof String) {
             @SuppressWarnings(value = "unchecked")
-            Object result = Enum.valueOf((Class<? extends Enum>) type, (String) value);
+            Object result = Enum.valueOf(
+                    (Class<? extends Enum>) type, (String) value);
             return result;
         } else {
             throw new RuntimeException("Cannot convert value of type " + type);
