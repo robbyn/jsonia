@@ -142,7 +142,7 @@ public class JSonParser {
                 if (Character.isDigit(c)) {
                     number(false);
                 } else if (Character.isJavaIdentifierStart(c)) {
-                    identifier();
+                    keyword();
                 } else {
                     throw new IOException("Invalid character " + (char)c);
                 }
@@ -285,7 +285,7 @@ public class JSonParser {
         }
     }
 
-    private void identifier() throws IOException {
+    private void keyword() throws IOException {
         StringBuilder buf = new StringBuilder();
         do {
             buf.append((char)c);

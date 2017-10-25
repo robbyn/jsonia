@@ -24,11 +24,23 @@ public class JSon {
 
     public static <T> T read(Reader in, Class<T> clazz)
             throws IOException {
-        JSonBuilder handler = new JSonBuilder(clazz);
+        return clazz.cast(readObject(in, new JSonBuilder(clazz)));
+    }
+
+    public static Object read(String json) throws IOException {
+        return read(new StringReader(json));
+    }
+
+    public static Object read(Reader in) throws IOException {
+        return readObject(in, new JSonGenericBuilder());
+    }
+
+    private static Object readObject(Reader in, AbstractJSonBuilder handler)
+            throws IOException {
         JSonHandler jsonHandler = InvocationLogger.wrap(
                 Level.FINE, handler, JSonHandler.class);
         JSonParser.parse(in, jsonHandler);
-        return clazz.cast(handler.getTop());
+        return handler.getTop();
     }
 
     public static void write(Object object, PrintWriter out, boolean format) {
@@ -80,12 +92,14 @@ public class JSon {
     }
 
     private static void visitMap(Map<?, ?> map, JSonHandler handler) {
+        handler.startObject();
         for (Map.Entry<?,?> e: map.entrySet()) {
             String name = e.getKey().toString();
             handler.startField(name);
             visit(e.getValue(), handler);
             handler.endField(name);
         }
+        handler.endObject();
     }
 
     private static void visitObject(ClassDef cdef, Object obj,

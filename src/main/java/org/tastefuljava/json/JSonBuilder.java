@@ -13,20 +13,16 @@ import java.util.logging.Logger;
 import org.tastefuljava.props.ClassDef;
 import org.tastefuljava.props.PropertyDef;
 
-public class JSonBuilder implements JSonHandler {
-    private static final Logger LOG = Logger.getLogger(JSon.class.getName());
+public class JSonBuilder extends AbstractJSonBuilder {
+    private static final Logger LOG
+            = Logger.getLogger(JSonBuilder.class.getName());
 
-    private Object top = null;
     private final List<Object> stack = new ArrayList<>();
     private Class<?> type;
     private final List<Class<?>> typeStack = new ArrayList<>();
 
     public JSonBuilder(Class<?> type) {
         this.type = type;
-    }
-
-    public Object getTop() {
-        return top;
     }
 
     @Override
