@@ -62,7 +62,7 @@ public class JSonParser {
         nextsy();
         value();
     }
-    
+
     private void value() throws IOException {
         switch(sy) {
             case EOF:
@@ -142,7 +142,7 @@ public class JSonParser {
                 if (Character.isDigit(c)) {
                     number(false);
                 } else if (Character.isJavaIdentifierStart(c)) {
-                    identifier();
+                    keyword();
                 } else {
                     throw new IOException("Invalid character " + (char)c);
                 }
@@ -275,20 +275,17 @@ public class JSonParser {
             if (bi.compareTo(MIN_LONG) < 0 || bi.compareTo(MAX_LONG) > 0) {
                 number = bi;
             } else {
-                setLong(bi.longValue());
+                long l = bi.longValue();
+                if (l < Integer.MIN_VALUE || l > Integer.MAX_VALUE) {
+                    number = l;
+                } else {
+                    number = (int) l;
+                }
             }
         }
     }
 
-    private void setLong(long l) {
-        if (l < Integer.MIN_VALUE || l > Integer.MAX_VALUE) {
-            number = l;
-        } else {
-            number = (int)l;
-        }
-    }
-
-    private void identifier() throws IOException {
+    private void keyword() throws IOException {
         StringBuilder buf = new StringBuilder();
         do {
             buf.append((char)c);

@@ -9,7 +9,6 @@ public class MethodProperty extends PropertyDef {
     private static final Logger LOG
             = Logger.getLogger(MethodProperty.class.getName());
 
-    private final String name;
     private final Method getter;
     private final Method setter;
 
@@ -19,7 +18,6 @@ public class MethodProperty extends PropertyDef {
             throw new IllegalArgumentException(
                     "Getter and setter cannot both be null.");
         }
-        this.name = name;
         this.getter = getter;
         this.setter = setter;
     }

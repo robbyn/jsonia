@@ -13,20 +13,16 @@ import java.util.logging.Logger;
 import org.tastefuljava.props.ClassDef;
 import org.tastefuljava.props.PropertyDef;
 
-public class JSonBuilder implements JSonHandler {
-    private static final Logger LOG = Logger.getLogger(JSon.class.getName());
+public class JSonBuilder extends AbstractJSonBuilder {
+    private static final Logger LOG
+            = Logger.getLogger(JSonBuilder.class.getName());
 
-    private Object top = null;
     private final List<Object> stack = new ArrayList<>();
     private Class<?> type;
     private final List<Class<?>> typeStack = new ArrayList<>();
 
     public JSonBuilder(Class<?> type) {
         this.type = type;
-    }
-
-    public Object getTop() {
-        return top;
     }
 
     @Override
@@ -133,7 +129,8 @@ public class JSonBuilder implements JSonHandler {
             return null;
         } else if (type.isAssignableFrom(value.getClass())) {
             return type.cast(value);
-        } else if ((type == boolean.class || type == Boolean.class) && value.getClass() == Boolean.class) {
+        } else if ((type == boolean.class || type == Boolean.class)
+                && value.getClass() == Boolean.class) {
             return value;
         } else if (value instanceof Number) {
             Number number = (Number) value;
@@ -152,13 +149,16 @@ public class JSonBuilder implements JSonHandler {
             } else if (type == BigDecimal.class) {
                 return BigDecimal.valueOf(number.doubleValue());
             } else {
-                throw new RuntimeException("Cannot convert value of type " + type);
+                throw new RuntimeException(
+                        "Cannot convert value of type " + type);
             }
         } else if (type == Date.class && value instanceof String) {
             return JSonDates.parse((String) value);
-        } else if (Enum.class.isAssignableFrom(type) && value instanceof String) {
+        } else if (Enum.class.isAssignableFrom(type)
+                && value instanceof String) {
             @SuppressWarnings(value = "unchecked")
-            Object result = Enum.valueOf((Class<? extends Enum>) type, (String) value);
+            Object result = Enum.valueOf(
+                    (Class<? extends Enum>) type, (String) value);
             return result;
         } else {
             throw new RuntimeException("Cannot convert value of type " + type);

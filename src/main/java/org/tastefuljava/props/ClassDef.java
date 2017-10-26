@@ -65,8 +65,8 @@ public class ClassDef<T> {
                 if (!props.containsKey(name)
                         && !Modifier.isStatic(mods)
                         && !Modifier.isTransient(mods)
-                        && !field.getName().startsWith("this$")
-                        && !field.getName().startsWith("val$")) {
+                        && !name.startsWith("this$")
+                        && !name.startsWith("val$")) {
                     field.setAccessible(true);
                     props.put(name, new FieldProperty(field));
                 }
