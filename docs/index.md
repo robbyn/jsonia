@@ -3,5 +3,5 @@ layout: main
 title: JSonia
 permalink: /
 ---
-JSonia
+JSonia: JSON made even simpler
 ======
