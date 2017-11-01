@@ -10,12 +10,7 @@ import java.io.Reader;
 import java.io.StringReader;
 import java.io.StringWriter;
 import java.io.Writer;
-import java.lang.reflect.Array;
-import java.util.Date;
-import java.util.Map;
 import java.util.logging.Level;
-import org.tastefuljava.props.ClassDef;
-import org.tastefuljava.props.PropertyDef;
 import org.tastefuljava.util.InvocationLogger;
 
 public class JSon {
@@ -100,74 +95,6 @@ public class JSon {
     }
 
     public static void visit(Object object, JSonHandler handler) {
-        if (object == null) {
-            handler.handleNull();
-        } else if (object instanceof Boolean) {
-            handler.handleBoolean((Boolean)object);
-        } else if (object instanceof Number) {
-            handler.handleNumber(((Number)object).doubleValue());
-        } else if (object instanceof String) {
-            handler.handleString((String)object);
-        } else if (object instanceof Date) {
-            handler.handleString(JSonDates.format((Date)object));
-        } else {
-            Class<?> clazz = object.getClass();
-            if (clazz.isArray()) {
-                visitArray(object, handler);
-            } else if (Iterable.class.isAssignableFrom(clazz)) {
-                visitCollection((Iterable<?>)object, handler);
-            } else if (Map.class.isAssignableFrom(clazz)) {
-                visitMap((Map<?,?>)object, handler);
-            } else {
-                ClassDef cdef = ClassDef.forClass(clazz);
-                visitObject(cdef, object, handler);
-            }
-        }
-    }
-
-    private static void visitMap(Map<?, ?> map, JSonHandler handler) {
-        handler.startObject();
-        for (Map.Entry<?,?> e: map.entrySet()) {
-            String name = e.getKey().toString();
-            handler.startField(name);
-            visit(e.getValue(), handler);
-            handler.endField(name);
-        }
-        handler.endObject();
-    }
-
-    private static void visitObject(ClassDef cdef, Object obj,
-            JSonHandler handler) {
-        handler.startObject();
-        for (PropertyDef prop: cdef.getProperties()) {
-            Object value = prop.get(obj);
-            if (value != null) {
-                handler.startField(prop.getName());
-                visit(value, handler);
-                handler.endField(prop.getName());
-            }
-        }
-        handler.endObject();
-    }
-
-    private static void visitCollection(Iterable<?> col, JSonHandler handler) {
-        handler.startArray();
-        for (Object elm: col) {
-            handler.startElement();
-            visit(elm, handler);
-            handler.endElement();
-        }
-        handler.endArray();
-    }
-
-    private static void visitArray(Object array, JSonHandler handler) {
-        handler.startArray();
-        int length = Array.getLength(array);
-        for (int i = 0; i < length; ++i) {
-            handler.startElement();
-            visit(Array.get(array, i), handler);
-            handler.endElement();
-        }
-        handler.endArray();
+        new JSonVisitor(handler).visit(object);
     }
 }

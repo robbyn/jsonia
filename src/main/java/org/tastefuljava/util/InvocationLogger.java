@@ -13,6 +13,10 @@ public class InvocationLogger implements InvocationHandler {
     private final Level level;
     private final Object delegate;
 
+    public static <T> T create(Level level, Class<T> intf, Class<?>... intfs) {
+        return wrap(level, null, intf, intfs);
+    }
+
     public static <T> T wrap(Level level, T object, Class<T> intf,
             Class<?>... intfs) {
         if (!LOG.isLoggable(level)) {
@@ -38,11 +42,16 @@ public class InvocationLogger implements InvocationHandler {
     public Object invoke(Object proxy, Method method,
             Object[] args) throws Throwable {
         String signature = signature(method, args);
-        LOG.log(level, "start {0}", signature);
-        try {
-            return method.invoke(delegate, args);
-        } finally {
-            LOG.log(level, "end {0}", method.getName());
+        if (delegate == null) {
+            LOG.log(level, signature);
+            return null;
+        } else {
+            LOG.log(level, "start {0}", signature);
+            try {
+                return method.invoke(delegate, args);
+            } finally {
+                LOG.log(level, "end {0}", method.getName());
+            }
         }
     }
 
