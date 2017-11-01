@@ -1,4 +1,4 @@
-package org.tastefuljava.json;
+package org.tastefuljava.jsonia;
 
 import java.io.Closeable;
 import java.io.PrintWriter;

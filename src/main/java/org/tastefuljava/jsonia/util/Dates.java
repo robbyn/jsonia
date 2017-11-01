@@ -1,4 +1,4 @@
-package org.tastefuljava.util;
+package org.tastefuljava.jsonia.util;
 
 import java.text.DateFormat;
 import java.text.ParseException;

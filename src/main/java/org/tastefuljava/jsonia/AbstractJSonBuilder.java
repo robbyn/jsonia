@@ -1,4 +1,4 @@
-package org.tastefuljava.json;
+package org.tastefuljava.jsonia;
 
 public abstract class AbstractJSonBuilder implements JSonHandler {
     protected Object top;

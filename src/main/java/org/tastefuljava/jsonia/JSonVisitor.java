@@ -1,11 +1,11 @@
-package org.tastefuljava.json;
+package org.tastefuljava.jsonia;
 
-import org.tastefuljava.util.Dates;
+import org.tastefuljava.jsonia.util.Dates;
 import java.lang.reflect.Array;
 import java.util.Date;
 import java.util.Map;
-import org.tastefuljava.props.ClassDef;
-import org.tastefuljava.props.PropertyDef;
+import org.tastefuljava.jsonia.props.ClassDef;
+import org.tastefuljava.jsonia.props.PropertyDef;
 
 public class JSonVisitor {
     private final JSonHandler handler;

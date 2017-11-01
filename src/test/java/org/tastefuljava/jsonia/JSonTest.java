@@ -1,5 +1,9 @@
-package org.tastefuljava.json;
+package org.tastefuljava.jsonia;
 
+import org.tastefuljava.jsonia.JSonHandler;
+import org.tastefuljava.jsonia.JSon;
+import org.tastefuljava.jsonia.JSonFormatter;
+import org.tastefuljava.jsonia.JSonParser;
 import java.io.IOException;
 import java.io.StringWriter;
 import java.math.BigDecimal;
@@ -18,7 +22,7 @@ import static org.junit.Assert.fail;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
-import org.tastefuljava.util.InvocationLogger;
+import org.tastefuljava.jsonia.util.InvocationLogger;
 
 public class JSonTest {
     private static final Logger LOG

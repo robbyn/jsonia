@@ -1,4 +1,4 @@
-package org.tastefuljava.json;
+package org.tastefuljava.jsonia;
 
 public interface JSonHandler {
     void startObject();

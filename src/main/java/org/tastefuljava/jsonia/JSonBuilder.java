@@ -1,6 +1,6 @@
-package org.tastefuljava.json;
+package org.tastefuljava.jsonia;
 
-import org.tastefuljava.util.Dates;
+import org.tastefuljava.jsonia.util.Dates;
 import java.lang.reflect.Array;
 import java.math.BigDecimal;
 import java.util.ArrayList;
@@ -11,8 +11,8 @@ import java.util.List;
 import java.util.TreeSet;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import org.tastefuljava.props.ClassDef;
-import org.tastefuljava.props.PropertyDef;
+import org.tastefuljava.jsonia.props.ClassDef;
+import org.tastefuljava.jsonia.props.PropertyDef;
 
 public class JSonBuilder extends AbstractJSonBuilder {
     private static final Logger LOG

@@ -1,4 +1,4 @@
-package org.tastefuljava.json;
+package org.tastefuljava.jsonia;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -11,7 +11,7 @@ import java.io.StringReader;
 import java.io.StringWriter;
 import java.io.Writer;
 import java.util.logging.Level;
-import org.tastefuljava.util.InvocationLogger;
+import org.tastefuljava.jsonia.util.InvocationLogger;
 
 public class JSon {
     public static <T> T read(File file, String encoding, Class<T> clazz)

@@ -1,4 +1,4 @@
-package org.tastefuljava.props;
+package org.tastefuljava.jsonia.props;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;

@@ -1,4 +1,4 @@
-package org.tastefuljava.props;
+package org.tastefuljava.jsonia.props;
 
 public abstract class PropertyDef {
     private final String name;
