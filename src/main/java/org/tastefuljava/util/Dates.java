@@ -1,4 +1,4 @@
-package org.tastefuljava.json;
+package org.tastefuljava.util;
 
 import java.text.DateFormat;
 import java.text.ParseException;
@@ -8,14 +8,14 @@ import java.util.TimeZone;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-public class JSonDates {
+public class Dates {
     private static final Logger LOG
-            = Logger.getLogger(JSonDates.class.getName());
+            = Logger.getLogger(Dates.class.getName());
 
     public static final String ISO8601 = "yyyy-MM-dd'T'HH:mm:ss.SSSX";
     public static final TimeZone GMT = TimeZone.getTimeZone("GMT");
 
-    private JSonDates() {
+    private Dates() {
     }
 
     public static Date parse(String s, String pattern, TimeZone tz) {

@@ -1,5 +1,6 @@
 package org.tastefuljava.json;
 
+import org.tastefuljava.util.Dates;
 import java.lang.reflect.Array;
 import java.math.BigDecimal;
 import java.util.ArrayList;
@@ -153,7 +154,7 @@ public class JSonBuilder extends AbstractJSonBuilder {
                         "Cannot convert value of type " + type);
             }
         } else if (type == Date.class && value instanceof String) {
-            return JSonDates.parse((String) value);
+            return Dates.parse((String) value);
         } else if (Enum.class.isAssignableFrom(type)
                 && value instanceof String) {
             @SuppressWarnings(value = "unchecked")

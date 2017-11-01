@@ -1,5 +1,6 @@
 package org.tastefuljava.json;
 
+import org.tastefuljava.util.Dates;
 import java.lang.reflect.Array;
 import java.util.Date;
 import java.util.Map;
@@ -23,7 +24,7 @@ public class JSonVisitor {
         } else if (object instanceof String) {
             handler.handleString((String)object);
         } else if (object instanceof Date) {
-            handler.handleString(JSonDates.format((Date)object));
+            handler.handleString(Dates.format((Date)object));
         } else {
             Class<?> clazz = object.getClass();
             if (clazz.isArray()) {
