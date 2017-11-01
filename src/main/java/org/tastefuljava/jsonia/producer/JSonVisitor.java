@@ -1,9 +1,10 @@
-package org.tastefuljava.jsonia;
+package org.tastefuljava.jsonia.producer;
 
 import org.tastefuljava.jsonia.util.Dates;
 import java.lang.reflect.Array;
 import java.util.Date;
 import java.util.Map;
+import org.tastefuljava.jsonia.JSonHandler;
 import org.tastefuljava.jsonia.props.ClassDef;
 import org.tastefuljava.jsonia.props.PropertyDef;
 

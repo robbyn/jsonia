@@ -1,4 +1,4 @@
-package org.tastefuljava.jsonia;
+package org.tastefuljava.jsonia.producer;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -9,6 +9,7 @@ import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.util.HashMap;
 import java.util.Map;
+import org.tastefuljava.jsonia.JSonHandler;
 
 public class JSonParser {
     private static enum Symbol {

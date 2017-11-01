@@ -1,4 +1,4 @@
-package org.tastefuljava.jsonia;
+package org.tastefuljava.jsonia.handler;
 
 import java.util.ArrayList;
 import java.util.HashMap;

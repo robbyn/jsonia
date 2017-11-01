@@ -1,10 +1,11 @@
-package org.tastefuljava.jsonia;
+package org.tastefuljava.jsonia.handler;
 
 import java.io.Closeable;
 import java.io.PrintWriter;
 import java.io.Writer;
 import java.text.DecimalFormat;
 import java.text.DecimalFormatSymbols;
+import org.tastefuljava.jsonia.JSonHandler;
 
 public class JSonFormatter implements JSonHandler, Closeable {
     private static final char HEX[] = "0123456789ABCDEF".toCharArray();

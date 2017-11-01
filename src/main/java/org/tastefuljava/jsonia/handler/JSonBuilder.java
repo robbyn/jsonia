@@ -1,4 +1,4 @@
-package org.tastefuljava.jsonia;
+package org.tastefuljava.jsonia.handler;
 
 import org.tastefuljava.jsonia.util.Dates;
 import java.lang.reflect.Array;

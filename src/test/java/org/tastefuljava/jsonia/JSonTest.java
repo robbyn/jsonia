@@ -2,8 +2,8 @@ package org.tastefuljava.jsonia;
 
 import org.tastefuljava.jsonia.JSonHandler;
 import org.tastefuljava.jsonia.JSon;
-import org.tastefuljava.jsonia.JSonFormatter;
-import org.tastefuljava.jsonia.JSonParser;
+import org.tastefuljava.jsonia.handler.JSonFormatter;
+import org.tastefuljava.jsonia.producer.JSonParser;
 import java.io.IOException;
 import java.io.StringWriter;
 import java.math.BigDecimal;
