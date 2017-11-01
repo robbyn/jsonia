@@ -18,6 +18,7 @@ import static org.junit.Assert.fail;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
+import org.tastefuljava.util.InvocationLogger;
 
 public class JSonTest {
     private static final Logger LOG
@@ -118,6 +119,17 @@ public class JSonTest {
             LOG.log(Level.SEVERE, null, ex);
             fail(ex.getMessage());
         }
+    }
+
+    @Test
+    public void testLogger() {
+        LOG.info("begin testLogger");
+        TestObject obj1 = new TestObject(
+                BigDecimal.valueOf(123, 2), new Date(), "Hello world!!!",
+                new int[] {1,2,3});
+        JSon.visit(obj1,
+                InvocationLogger.create(Level.INFO, JSonHandler.class));
+        LOG.info("end testLogger");
     }
 
     private static String reformat(String json, boolean indent) {
