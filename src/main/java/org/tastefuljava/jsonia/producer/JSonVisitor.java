@@ -55,11 +55,13 @@ public class JSonVisitor {
     private void visitObject(ClassDef cdef, Object obj) {
         handler.startObject();
         for (PropertyDef prop: cdef.getProperties()) {
-            Object value = prop.get(obj);
-            if (value != null) {
-                handler.startField(prop.getName());
-                visit(value);
-                handler.endField(prop.getName());
+            if (prop.canGet()) {
+                Object value = prop.get(obj);
+                if (value != null) {
+                    handler.startField(prop.getName());
+                    visit(value);
+                    handler.endField(prop.getName());
+                }
             }
         }
         handler.endObject();
