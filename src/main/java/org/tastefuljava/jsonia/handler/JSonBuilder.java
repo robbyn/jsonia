@@ -2,6 +2,7 @@ package org.tastefuljava.jsonia.handler;
 
 import org.tastefuljava.jsonia.util.Dates;
 import java.lang.reflect.Array;
+import java.lang.reflect.InvocationTargetException;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -29,8 +30,10 @@ public class JSonBuilder extends AbstractJSonBuilder {
     @Override
     public void startObject() {
         try {
-            stack.add(0, type.newInstance());
-        } catch (InstantiationException | IllegalAccessException ex) {
+            stack.add(0, type.getConstructor().newInstance());
+        } catch (InstantiationException | IllegalAccessException
+                | NoSuchMethodException | SecurityException
+                | IllegalArgumentException | InvocationTargetException ex) {
             LOG.log(Level.SEVERE, "Error instanciating object", ex);
             throw new RuntimeException(ex.getMessage());
         }
